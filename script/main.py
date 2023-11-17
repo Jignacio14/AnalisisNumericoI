@@ -1,3 +1,6 @@
+import euler
+import rungekutta2
+
 def main():
     # Datos del problema
     m = 200  # masa (kg)
@@ -11,6 +14,7 @@ def main():
 
     # Parámetros de simulación
     tiempo_total = 5.0  # segundos
+
 
     return
 
