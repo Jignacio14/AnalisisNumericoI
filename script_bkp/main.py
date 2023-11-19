@@ -1,6 +1,3 @@
-import numpy
-import euler
-import rungekutta2
 import amortiguador
 import sinamortiguar
 def main():
