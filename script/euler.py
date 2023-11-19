@@ -1,3 +1,5 @@
+import utils
+from matplotlib import pyplot as plt
 import numpy as np
 
 # Método de Euler explícito para ecuación diferencial de segundo orden
@@ -40,3 +42,44 @@ def euler_implicito(y0, v0, m, k, lambda_, c, tiempo_total, paso_tiempo):
         v[n] = v[n-1] + paso_tiempo * ((-k / m) * (y[n] - c) - (lambda_ / m) * v[n-1])
 
     return y, v
+
+def armarGraficoEulerOK(aproximacion,t,analitica,h,titulo,nombre):
+    plt.plot(t,aproximacion)
+    plt.xlabel('t')
+    plt.ylabel('y')
+    plt.title(titulo + str(h))
+    plt.plot(t,analitica(t) , 'r--')
+    name = nombre+str(h)+'.png'
+    plt.savefig(name)
+    plt.show()
+    return
+
+def armarGraficoEulerError(t,aproximacion,h,titulo,nombre):
+    plt.plot(t,aproximacion)
+    plt.xlabel('t')
+    plt.ylabel('error')
+    plt.title(titulo + str(h))
+    name = nombre+str(h)+'.png'
+    plt.savefig(name)
+    plt.show()
+    return
+
+def iterarEuler(aproximacion,intervalo,h,analitica):
+    paso = 0
+    for i in range((intervalo/h)+1):
+        aproximacion[i] = (analitica(paso) - aproximacion[i])
+        paso+=h
+
+def imprimirEulerExplicito(f,intervalo,h,analitica,t):
+    aproximacion = euler_explicito(f,intervalo,h)
+    armarGraficoEulerOK(aproximacion,t,h,analitica,utils.y_t_EulerExplicito,utils.y_nombre_EulerExplicito)
+    iterarEuler(aproximacion,intervalo,h,analitica)
+    armarGraficoEulerError(t,aproximacion,h,utils.e_t_EulerExplicito,utils.e_nombre_EulerExplicito)
+    return
+
+def imprimirEulerImplicito(A_invertida, termino_indep,intervalo,h,analitica,t):
+    aproximacion = euler_implicito(A_invertida,termino_indep,intervalo,h)
+    armarGraficoEulerOK(aproximacion,t,h,analitica,utils.y_t_EulerImplicito,utils.y_nombre_EulerImplicito)
+    iterarEuler(aproximacion,intervalo,h,analitica)
+    armarGraficoEulerError(t,aproximacion,h,utils.e_t_EulerImplicito,utils.e_nombre_EulerImplicito)
+    return
