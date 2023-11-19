@@ -17,7 +17,7 @@ v0 = 0.0  # velocidad inicial
 
 # Parámetros de simulación
 delta_tiempo = 0.005  # segundos
-
+c_prim = 0 
 h = 0.005
 intervalo = 5
 t=np.arange(0,intervalo+h,h)
@@ -30,5 +30,15 @@ e_nombre_EulerExplicito = 'error-EulerExplicito'
 
 y_t_EulerImplicito = 'y(t) euler implicito con paso = '
 y_nombre_EulerImplicito = 'EulerImplicito'
-e_t_EulerImplicito = 'e(t) euler Implicito con paso = '
+e_t_EulerImplicito = 'e(t) euler implicito con paso = '
 e_nombre_EulerImplicito = 'error-EulerImplicito'
+
+y_t_RK2 = 'y(t) RK2 con paso = '
+y_nombre_RK2 = 'RK2'
+e_t_RK2 = 'e(t) RK2 con paso = '
+e_nombre_RK2 = 'error-RK2'
+
+
+'Solucion analitica sin amortiguacion'
+def analitica(t):
+    return c - c * np.cos(((k/m)**0.5)*t)
