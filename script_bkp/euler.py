@@ -2,8 +2,6 @@ import utils
 import matplotlib.pyplot as plt
 import numpy as np
 
-'Euler Explicito'
-
 def euler_explicito(f,intervalo, paso):
     cantidad = intervalo/paso +1 
     u=np.zeros(int(cantidad),dtype=float)
@@ -21,16 +19,14 @@ def euler_explicito(f,intervalo, paso):
         i+=paso
     return u
 
-'Euler Implicito'
-
-def euler_implicito(A_menos1,termino_indep,intervalo, paso):
+def euler_implicito(A_invertida,termino_indep,intervalo, paso):
     cantidad = intervalo/paso +1
     res = np.zeros(int(cantidad*2))
     res.shape=(2,int(cantidad))
     i=0
     n=0
     while n<cantidad-1:
-        aux = np.array(A_menos1 @ res[:,n] + termino_indep)
+        aux = np.array(A_invertida @ res[:,n] + termino_indep)
         res[:,(n+1)]= aux
         n+=1
         i+=paso

@@ -42,3 +42,16 @@ e_nombre_RK2 = 'error-RK2'
 'Solucion analitica sin amortiguacion'
 def analitica(t):
     return c - c * np.cos(((k/m)**0.5)*t)
+
+maxiCompresion = -0.05
+compresionFinal = -10000000
+minimaPonderacion = 10000000000
+lambdaAmortiguado = 150
+kAmortiguado = 25000
+lambdaV = np.arange(150,12000,50)
+kV = np.arange(2500,100000,1000)
+
+
+def f2(y,c,t,y_prim,c_prim):
+    res =  (k/m)*(c(t)-y) + (lambda_/m) * (c_prim(t) - y_prim)
+    return res

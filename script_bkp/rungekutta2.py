@@ -2,78 +2,114 @@ import matplotlib.pyplot as plt
 import numpy as np
 import utils
 
-# Método de Runge-Kutta de segundo orden
-def runge_kutta_segundo_orden(y0, v0, m, k, lambda_, c, tiempo_total, paso_tiempo):
-    cantidad_pasos = int(tiempo_total / paso_tiempo) + 1
+def runge_kutta_segundo_orden(f, intervalo, paso):
+    # Calculamos la cantidad de puntos en el intervalo
+    cantidad = int(intervalo/paso) + 1
 
-    y = np.zeros(cantidad_pasos)
-    v = np.zeros(cantidad_pasos)
+    # Creamos arrays para almacenar los resultados de u y v
+    u = np.zeros(cantidad, dtype=float)
+    v = np.zeros(cantidad, dtype=float)
 
-    y[0] = y0
-    v[0] = v0
+    # Condiciones iniciales
+    u[0] = 0
+    v[0] = 0
 
-    for n in range(1, cantidad_pasos):
-        # Primer paso RK2
-        k1_y = paso_tiempo * v[n-1]
-        k1_v = paso_tiempo * ((-k / m) * (y[n-1] - c) - (lambda_ / m) * v[n-1])
+    n = 0  # Inicializamos el índice del bucle
+    i = 0  # Inicializamos el tiempo
 
-        # Segundo paso RK2
-        k2_y = paso_tiempo * (v[n-1] + k1_v)
-        k2_v = paso_tiempo * ((-k / m) * (y[n-1] + k1_y - c) - (lambda_ / m) * (v[n-1] + k1_v))
+    while n < cantidad-1:
+        # Predictor
+        u_actual_predictor = u[n] + paso * v[n]
+        v_actual_predictor = v[n] + paso * f(u[n])
 
-        # Actualizar soluciones utilizando RK2
-        y[n] = y[n-1] + 0.5 * (k1_y + k2_y)
-        v[n] = v[n-1] + 0.5 * (k1_v + k2_v)
+        # Corrector
+        u[n+1] = u[n] + (paso/2) * (v[n] + v_actual_predictor)
+        v[n+1] = v[n] + (paso/2) * (f(u[n]) + f(u_actual_predictor))
 
-    return y, v
+        n += 1
+        i += paso
 
-def runge_kuta_2(f,intervalo, paso):
-    cantidad = intervalo/paso +1 
-    u=np.zeros(int(cantidad),dtype=float)
-    v=np.zeros(int(cantidad),dtype=float)
-    u[0]=0
-    v[0]=0
-    i=0
-    n=0
-    while n<cantidad-1:
-        u_actual_predictor = (u[(n)] + paso * v[n])
-        v_actual_predictor = (v[n] + paso * f(u[n]))
-        u[(n+1)]= (u[n] + (paso/2) *(v[n] + v_actual_predictor) )
-        v[n+1] = (v[n] + (paso/2) * (f(u[n]) + f(u_actual_predictor)) )
-        n+=1
-        i+=paso
     return u
 
-def armarGraficoRK2OK(aproximacion,t,h,titulo,nombre):
-    plt.plot(t,aproximacion)
+def armarGraficoRK2OK(aproximacion, t, h, titulo, nombre):
+    plt.plot(t, aproximacion)
     plt.xlabel('t')
     plt.ylabel('y')
     plt.title(titulo + str(h))
-    plt.plot(t,utils.analitica(t) , 'r--')
-    name = nombre+str(h)+'.png'
+    plt.plot(t, utils.analitica(t), 'r--')
+    name = nombre + str(h) + '.png'
     plt.savefig(name)
     plt.show()
     return
 
-def armarGraficoRK2Error(t,aproximacion,h,titulo,nombre):
-    plt.plot(t,aproximacion)
+def armarGraficoRK2Error(t, aproximacion, h, titulo, nombre):
+    plt.plot(t, aproximacion)
     plt.xlabel('t')
     plt.ylabel('error')
     plt.title(titulo + str(h))
-    name = nombre+str(h)+'.png'
+    name = nombre + str(h) + '.png'
     plt.savefig(name)
     plt.show()
     return
 
-def iterarRK2(aproximacion,intervalo,h):
-    paso=0
-    for j in range (int((intervalo/h)+1)):
+def iterarRK2(aproximacion, intervalo, h):
+    paso = 0
+    for j in range(int((intervalo/h) + 1)):
         aproximacion[j] = (utils.analitica(paso) - aproximacion[j])
         paso += h
     return
 
-def imprimirRungeKutta2(f,intervalo,h,t):
-    aproximacion = runge_kuta_2(f,intervalo, h)
-    armarGraficoRK2OK(aproximacion,t,h,utils.y_t_RK2,utils.y_nombre_RK2)
-    iterarRK2(aproximacion,intervalo,h)
-    armarGraficoRK2Error(aproximacion,t,h,utils.e_t_RK2,utils.e_nombre_RK2)
+def imprimirRungeKutta2(f, intervalo, h, t):
+    aproximacion = runge_kutta_segundo_orden(f, intervalo, h)
+    armarGraficoRK2OK(aproximacion, t, h, utils.y_t_RK2, utils.y_nombre_RK2)
+    iterarRK2(aproximacion, intervalo, h)
+    armarGraficoRK2Error(aproximacion, t, h, utils.e_t_RK2, utils.e_nombre_RK2)
+    return
+
+def rungeKuttaO2ConExtras(f, intervalo, paso, extras):
+    cantidad = intervalo/paso + 1 
+    u = np.zeros(int(cantidad), dtype=float)
+    v = np.zeros(int(cantidad), dtype=float)
+    u[0] = 0
+    v[0] = 0
+    i = 0
+    n = 0
+    while n < cantidad-1:
+        u_actual_predictor = (u[(n)] + paso * v[n])
+        v_actual_predictor = (v[n] + paso * f(u[n], extras[0], i, v[n], extras[1]))
+        u[(n+1)] = (u[n] + (paso/2) * (v[n] + v_actual_predictor))
+        v[n+1] = (v[n] + (paso/2) * (f(u[n], extras[0], i, v[n], extras[1]) + f(u_actual_predictor, extras[0], i+paso, v_actual_predictor, extras[1])))
+        n += 1
+        i += paso
+    return u, v
+
+def imprimirRungeKutta2Extras(vfun, intervalo, h, extras, t, c, k, lam):
+    x = np.arange(0, intervalo+h, h)
+    y = vfun(x)
+    plt.plot(x, y, 'r')
+    
+    paso = 0
+    aproximada, v = rungeKuttaO2ConExtras(utils.f2, intervalo, h, extras)
+    u = np.copy(aproximada)
+    plt.plot(t, aproximada)
+    plt.xlabel('t')
+    plt.ylabel('y')
+    plt.title('y(t) RK2 k = ' + str(k))
+    name = 'RK2Amortiguado' + str(h) + '.png'
+    plt.savefig(name)
+    plt.show()
+    minimo = 0
+    for j in range(int((intervalo/h) + 1)):
+        aproximada[j] = (aproximada[j] - float(c(paso)))
+        if aproximada[j] < minimo:
+            minimo = aproximada[j]
+        paso += h
+    print('maxima compresion k = ' + str(k) + ' lambda = ' + str(lam) + '  :  ' + str(minimo))
+    plt.plot(t, aproximada)
+    plt.xlabel('t')
+    plt.ylabel('compresion')
+    plt.title('compresion(t) del amortiguador ')
+    name = 'Compresion' + str(h) + '.png'
+    plt.savefig(name)
+    plt.show()
+    return u, v
