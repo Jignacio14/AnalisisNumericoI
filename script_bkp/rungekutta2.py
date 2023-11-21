@@ -95,8 +95,8 @@ def imprimirAmortiguado(t,aproximada,k,h):
     plt.ylabel('y')
     plt.title('y(t) RK2 k = ' + str(k))
     name = 'RK2Amortiguado' + str(h) + '.png'
-    #plt.savefig(name)
-    #plt.show()
+    plt.savefig(name)
+    plt.show()
     return
 
 def imprimirCompresion(t,aproximada,h):
@@ -105,8 +105,8 @@ def imprimirCompresion(t,aproximada,h):
     plt.ylabel('compresion')
     plt.title('compresion(t) del amortiguador ')
     name = 'Compresion' + str(h) + '.png'
-    #plt.savefig(name)
-    #plt.show()
+    plt.savefig(name)
+    plt.show()
     return
 
 def iterarCompresion(intervalo,h,aproximada,k,lamda_,c):

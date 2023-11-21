@@ -48,6 +48,6 @@ compresionFinal = -10000000
 minimaPonderacion = 10000000000
 lambdaAmortiguado = 150
 kAmortiguado = 25000
-lambdaV = np.arange(150,12000,50)
-kV = np.arange(2500,100000,1000)
+lambdaV = np.arange(1000,12000,50)
+kV = np.arange(3000,100000,1000)
 

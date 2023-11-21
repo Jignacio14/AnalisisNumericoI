@@ -55,7 +55,6 @@ def amortiguar():
     extras = [c, c_prim]
 
     # varianza de lambda
-    
     rungekutta2.imprimirRungeKutta2Extras(v_n, utils.intervalo, utils.h, extras, t, c, 15000, 500)
     rungekutta2.imprimirRungeKutta2Extras(v_n, utils.intervalo, utils.h, extras, t, c, 15000, 1000)
     rungekutta2.imprimirRungeKutta2Extras(v_n, utils.intervalo, utils.h, extras, t, c, 15000, 1500)
@@ -73,7 +72,6 @@ def amortiguar():
     rungekutta2.imprimirRungeKutta2Extras(v_n, utils.intervalo, utils.h, extras, t, c, 40000, 500)
 
     # prueba de otra varianza, fidelidad de datos
-    
     rungekutta2.imprimirRungeKutta2Extras(v_n, utils.intervalo, utils.h, extras, t, c, 30000, 500)
     rungekutta2.imprimirRungeKutta2Extras(v_n, utils.intervalo, utils.h, extras, t, c, 30000, 1000)
     rungekutta2.imprimirRungeKutta2Extras(v_n, utils.intervalo, utils.h, extras, t, c, 30000, 1500)
@@ -87,12 +85,14 @@ def amortiguar():
     lambdaAmortiguado = utils.lambdaAmortiguado
     kAmortiguado = utils.kAmortiguado
     compresionFinal = utils.compresionFinal
+    minimaPonderacion = utils.minimaPonderacion
+    lam = 750
     for i in range(int(lambdaV.shape[0])-1):
         for j in range(int(kV.shape[0])-1):
             act = 0
             act = maximaCompresion(utils.intervalo, utils.h, extras, c,lambdaV[i],kV[j])
             if act >= utils.maxiCompresion:
-                ponderacionActual = lambdaV[i] / 750 + kV[j] / utils.k
+                ponderacionActual = lambdaV[i] / lam + kV[j] / utils.k
                 if ponderacionActual < minimaPonderacion:
                     minimaPonderacion = ponderacionActual
                     lambdaAmortiguado = lambdaV[i]
@@ -102,8 +102,8 @@ def amortiguar():
     print('K elegido = ' + str(kAmortiguado) + ' y lambda electo = ' + str(lambdaAmortiguado) +
           'con compresion = ' + str(compresionFinal))
     
-    kAmortiguado = 80500
-    lambdaAmortiguado = 4550
+    kAmortiguado = 10550
+    lambdaAmortiguado = 5550
     t = np.arange(0, utils.intervalo + utils.h, utils.h)
     u, v = rungekutta2.imprimirRungeKutta2Extras(v_n, utils.intervalo, utils.h, extras, t, c, kAmortiguado, lambdaAmortiguado)
 
@@ -113,6 +113,6 @@ def amortiguar():
     plt.xlabel('t')
     plt.ylabel('y\'\'(t)')
     plt.title('Aceleracion')
-    #plt.plot(x, y, 'r')
-    #plt.show()
+    plt.plot(x, y, 'r')
+    plt.show()
     return
