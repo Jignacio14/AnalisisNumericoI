@@ -30,7 +30,7 @@ def aceleracion(c, t, c_prim, u, v):
 
 def maximaCompresion(intervalo, h, extras, c):
     paso = 0
-    aproximada, v = rungekutta2.rungeKuttaO2ConExtras(utils.f2, intervalo, h, extras)
+    aproximada, v = rungekutta2.rungeKuttaO2ConExtras(intervalo, h, extras)
     minimo = 0
     for j in range(int((intervalo / h) + 1)):
         aproximada[j] = (aproximada[j] - float(c(paso)))
@@ -53,29 +53,59 @@ def amortiguar():
     t = np.arange(0, utils.intervalo + utils.h, utils.h)
     extras = [c, c_prim]
 
-    rungekutta2.imprimirRungeKutta2Extras(v_n, utils.intervalo, utils.h, extras, t, c, 15000, 500)
+    # varianza de lambda
     
-    # AGREGAR MÁS CASOS
+    print(str(utils.intervalo) + ' ' + str(utils.h) + ' '+ str(t) )
+    rungekutta2.imprimirRungeKutta2Extras(v_n, utils.intervalo, utils.h, extras, t, c, 15000, 500)
+    rungekutta2.imprimirRungeKutta2Extras(v_n, utils.intervalo, utils.h, extras, t, c, 15000, 750)
+    rungekutta2.imprimirRungeKutta2Extras(v_n, utils.intervalo, utils.h, extras, t, c, 15000, 1500)
+    rungekutta2.imprimirRungeKutta2Extras(v_n, utils.intervalo, utils.h, extras, t, c, 15000, 1250)
+    rungekutta2.imprimirRungeKutta2Extras(v_n, utils.intervalo, utils.h, extras, t, c, 15000, 1500)
+    rungekutta2.imprimirRungeKutta2Extras(v_n, utils.intervalo, utils.h, extras, t, c, 15000, 1750)
+    rungekutta2.imprimirRungeKutta2Extras(v_n, utils.intervalo, utils.h, extras, t, c, 15000, 2000)
+    
+    # varianza de k
+    rungekutta2.imprimirRungeKutta2Extras(v_n, utils.intervalo, utils.h, extras, t, c, 15000, 500)
+    rungekutta2.imprimirRungeKutta2Extras(v_n, utils.intervalo, utils.h, extras, t, c, 20000, 500)
+    rungekutta2.imprimirRungeKutta2Extras(v_n, utils.intervalo, utils.h, extras, t, c, 25000, 500)
+    rungekutta2.imprimirRungeKutta2Extras(v_n, utils.intervalo, utils.h, extras, t, c, 30000, 500)
+    rungekutta2.imprimirRungeKutta2Extras(v_n, utils.intervalo, utils.h, extras, t, c, 35000, 500)
+    rungekutta2.imprimirRungeKutta2Extras(v_n, utils.intervalo, utils.h, extras, t, c, 40000, 500)
 
-    for i in range(int(utils.lambdaV.shape[0])-1):
-        for j in range(int(utils.kV.shape[0])-1):
+    # prueba de otra varianza, fidelidad de datos
+    
+    rungekutta2.imprimirRungeKutta2Extras(v_n, utils.intervalo, utils.h, extras, t, c, 30000, 500)
+    rungekutta2.imprimirRungeKutta2Extras(v_n, utils.intervalo, utils.h, extras, t, c, 30000, 1000)
+    rungekutta2.imprimirRungeKutta2Extras(v_n, utils.intervalo, utils.h, extras, t, c, 30000, 1500)
+    rungekutta2.imprimirRungeKutta2Extras(v_n, utils.intervalo, utils.h, extras, t, c, 30000, 2000)
+    rungekutta2.imprimirRungeKutta2Extras(v_n, utils.intervalo, utils.h, extras, t, c, 30000, 2500)
+    rungekutta2.imprimirRungeKutta2Extras(v_n, utils.intervalo, utils.h, extras, t, c, 30000, 3000)
+    rungekutta2.imprimirRungeKutta2Extras(v_n, utils.intervalo, utils.h, extras, t, c, 30000, 3500)
+
+    lambdaV = utils.lambdaV
+    kV = utils.kV
+    lambdaAmortiguado = utils.lambdaAmortiguado
+    kAmortiguado = utils.kAmortiguado
+    compresionFinal = utils.compresionFinal
+    for i in range(int(lambdaV.shape[0])-1):
+        for j in range(int(kV.shape[0])-1):
             act = 0
             act = maximaCompresion(utils.intervalo, utils.h, extras, c)
             if act >= utils.maxiCompresion:
-                ponderacionActual = utils.lambdaV[i] / 750 + utils.kV[j] / utils.k
+                ponderacionActual = lambdaV[i] / 750 + kV[j] / utils.k
                 if ponderacionActual < minimaPonderacion:
                     minimaPonderacion = ponderacionActual
-                    utils.lambdaAmortiguado = utils.lambdaV[i]
-                    utils.kAmortiguado = utils.kV[j]
-                    utils.compresionFinal = act
+                    lambdaAmortiguado = lambdaV[i]
+                    kAmortiguado = kV[j]
+                    compresionFinal = act
                     
-    print('K elegido = ' + str(utils.kAmortiguado) + ' y lambda electo = ' + str(utils.lambdaAmortiguado) +
-          'con compresion = ' + str(utils.compresionFinal))
+    print('K elegido = ' + str(kAmortiguado) + ' y lambda electo = ' + str(lambdaAmortiguado) +
+          'con compresion = ' + str(compresionFinal))
     
-    utils.kAmortiguado = 80500
-    utils.lambdaAmortiguado = 4550
+    kAmortiguado = 80500
+    lambdaAmortiguado = 4550
     t = np.arange(0, utils.intervalo + utils.h, utils.h)
-    u, v = rungekutta2.imprimirRungeKutta2Extras(v_n, utils.intervalo, utils.h, extras, t, c, utils.kAmortiguado, utils.lambdaAmortiguado)
+    u, v = rungekutta2.imprimirRungeKutta2Extras(v_n, utils.intervalo, utils.h, extras, t, c, kAmortiguado, lambdaAmortiguado)
 
     afun = np.vectorize(aceleracion)
     x = np.arange(0, utils.intervalo + utils.h, utils.h)
@@ -83,6 +113,6 @@ def amortiguar():
     plt.xlabel('t')
     plt.ylabel('y\'\'(t)')
     plt.title('Aceleracion')
-    plt.plot(x, y, 'r')
-    plt.show()
+    #plt.plot(x, y, 'r')
+    #plt.show()
     return
