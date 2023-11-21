@@ -26,11 +26,12 @@ def c_prim(t):
         return 0
 
 def aceleracion(c, t, c_prim, u, v):
-    return (utils.k / utils.m) * (c(t) - u) + (utils.lambda_ / utils.m) * (c_prim(t) - v)
+    lambda_ = 750
+    return (utils.k / utils.m) * (c(t) - u) + (lambda_ / utils.m) * (c_prim(t) - v)
 
-def maximaCompresion(intervalo, h, extras, c):
+def maximaCompresion(intervalo, h, extras, c,lam,k):
     paso = 0
-    aproximada, v = rungekutta2.rungeKuttaO2ConExtras(intervalo, h, extras)
+    aproximada, v = rungekutta2.rungeKuttaO2ConExtras(intervalo, h, extras,lam,k)
     minimo = 0
     for j in range(int((intervalo / h) + 1)):
         aproximada[j] = (aproximada[j] - float(c(paso)))
@@ -55,14 +56,13 @@ def amortiguar():
 
     # varianza de lambda
     
-    print(str(utils.intervalo) + ' ' + str(utils.h) + ' '+ str(t) )
     rungekutta2.imprimirRungeKutta2Extras(v_n, utils.intervalo, utils.h, extras, t, c, 15000, 500)
-    rungekutta2.imprimirRungeKutta2Extras(v_n, utils.intervalo, utils.h, extras, t, c, 15000, 750)
+    rungekutta2.imprimirRungeKutta2Extras(v_n, utils.intervalo, utils.h, extras, t, c, 15000, 1000)
     rungekutta2.imprimirRungeKutta2Extras(v_n, utils.intervalo, utils.h, extras, t, c, 15000, 1500)
-    rungekutta2.imprimirRungeKutta2Extras(v_n, utils.intervalo, utils.h, extras, t, c, 15000, 1250)
-    rungekutta2.imprimirRungeKutta2Extras(v_n, utils.intervalo, utils.h, extras, t, c, 15000, 1500)
-    rungekutta2.imprimirRungeKutta2Extras(v_n, utils.intervalo, utils.h, extras, t, c, 15000, 1750)
     rungekutta2.imprimirRungeKutta2Extras(v_n, utils.intervalo, utils.h, extras, t, c, 15000, 2000)
+    rungekutta2.imprimirRungeKutta2Extras(v_n, utils.intervalo, utils.h, extras, t, c, 15000, 2500)
+    rungekutta2.imprimirRungeKutta2Extras(v_n, utils.intervalo, utils.h, extras, t, c, 15000, 3000)
+    rungekutta2.imprimirRungeKutta2Extras(v_n, utils.intervalo, utils.h, extras, t, c, 15000, 3500)
     
     # varianza de k
     rungekutta2.imprimirRungeKutta2Extras(v_n, utils.intervalo, utils.h, extras, t, c, 15000, 500)
@@ -90,7 +90,7 @@ def amortiguar():
     for i in range(int(lambdaV.shape[0])-1):
         for j in range(int(kV.shape[0])-1):
             act = 0
-            act = maximaCompresion(utils.intervalo, utils.h, extras, c)
+            act = maximaCompresion(utils.intervalo, utils.h, extras, c,lambdaV[i],kV[j])
             if act >= utils.maxiCompresion:
                 ponderacionActual = lambdaV[i] / 750 + kV[j] / utils.k
                 if ponderacionActual < minimaPonderacion:
