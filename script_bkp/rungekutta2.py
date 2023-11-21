@@ -60,13 +60,13 @@ def iterarRK2(aproximacion, intervalo, h):
     return
 
 def imprimirRungeKutta2(f, intervalo, h, t):
-    aproximacion = runge_kutta_segundo_orden(f, intervalo, h)
+    aproximacion = imprimirRungeKutta2Extras(f, intervalo, h)
     armarGraficoRK2OK(aproximacion, t, h, utils.y_t_RK2, utils.y_nombre_RK2)
     iterarRK2(aproximacion, intervalo, h)
     armarGraficoRK2Error(aproximacion, t, h, utils.e_t_RK2, utils.e_nombre_RK2)
     return
 
-def rungeKuttaO2ConExtras(f, intervalo, paso, extras):
+def rungeKuttaO2ConExtras(intervalo, paso, extras):
     cantidad = intervalo/paso + 1 
     u = np.zeros(int(cantidad), dtype=float)
     v = np.zeros(int(cantidad), dtype=float)
@@ -76,12 +76,18 @@ def rungeKuttaO2ConExtras(f, intervalo, paso, extras):
     n = 0
     while n < cantidad-1:
         u_actual_predictor = (u[(n)] + paso * v[n])
-        v_actual_predictor = (v[n] + paso * f(u[n], extras[0], i, v[n], extras[1]))
+        v_actual_predictor = (v[n] + paso * f2(u[n], extras[0], i, v[n], extras[1]))
         u[(n+1)] = (u[n] + (paso/2) * (v[n] + v_actual_predictor))
-        v[n+1] = (v[n] + (paso/2) * (f(u[n], extras[0], i, v[n], extras[1]) + f(u_actual_predictor, extras[0], i+paso, v_actual_predictor, extras[1])))
+        v[n+1] = (v[n] + (paso/2) * (f2(u[n], extras[0], i, v[n], extras[1]) + f2(u_actual_predictor, extras[0], i+paso, v_actual_predictor, extras[1])))
         n += 1
         i += paso
     return u, v
+
+
+def f2(y,c,t,y_prim,c_prim):
+    lambda_ = 750
+    res =  (utils.k/utils.m)*(c(t)-y) + (lambda_/utils.m) * (c_prim(t) - y_prim)
+    return res
 
 def imprimirRungeKutta2Extras(vfun, intervalo, h, extras, t, c, k, lam):
     x = np.arange(0, intervalo+h, h)
@@ -89,15 +95,15 @@ def imprimirRungeKutta2Extras(vfun, intervalo, h, extras, t, c, k, lam):
     plt.plot(x, y, 'r')
     
     paso = 0
-    aproximada, v = rungeKuttaO2ConExtras(utils.f2, intervalo, h, extras)
+    aproximada, v = rungeKuttaO2ConExtras(intervalo, h, extras)
     u = np.copy(aproximada)
     plt.plot(t, aproximada)
     plt.xlabel('t')
     plt.ylabel('y')
     plt.title('y(t) RK2 k = ' + str(k))
     name = 'RK2Amortiguado' + str(h) + '.png'
-    plt.savefig(name)
-    plt.show()
+    #plt.savefig(name)
+    #plt.show()
     minimo = 0
     for j in range(int((intervalo/h) + 1)):
         aproximada[j] = (aproximada[j] - float(c(paso)))
@@ -110,6 +116,6 @@ def imprimirRungeKutta2Extras(vfun, intervalo, h, extras, t, c, k, lam):
     plt.ylabel('compresion')
     plt.title('compresion(t) del amortiguador ')
     name = 'Compresion' + str(h) + '.png'
-    plt.savefig(name)
-    plt.show()
+    #plt.savefig(name)
+    #plt.show()
     return u, v

@@ -51,7 +51,3 @@ kAmortiguado = 25000
 lambdaV = np.arange(150,12000,50)
 kV = np.arange(2500,100000,1000)
 
-
-def f2(y,c,t,y_prim,c_prim):
-    res =  (k/m)*(c(t)-y) + (lambda_/m) * (c_prim(t) - y_prim)
-    return res
