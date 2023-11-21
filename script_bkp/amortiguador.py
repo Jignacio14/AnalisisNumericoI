@@ -54,6 +54,8 @@ def amortiguar():
     extras = [c, c_prim]
 
     # varianza de lambda
+    
+    print(str(utils.intervalo) + ' ' + str(utils.h) + ' '+ str(t) )
     rungekutta2.imprimirRungeKutta2Extras(v_n, utils.intervalo, utils.h, extras, t, c, 15000, 500)
     rungekutta2.imprimirRungeKutta2Extras(v_n, utils.intervalo, utils.h, extras, t, c, 15000, 750)
     rungekutta2.imprimirRungeKutta2Extras(v_n, utils.intervalo, utils.h, extras, t, c, 15000, 1500)

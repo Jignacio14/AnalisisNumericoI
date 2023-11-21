@@ -89,21 +89,28 @@ def f2(y,c,t,y_prim,c_prim):
     res =  (utils.k/utils.m)*(c(t)-y) + (lambda_/utils.m) * (c_prim(t) - y_prim)
     return res
 
-def imprimirRungeKutta2Extras(vfun, intervalo, h, extras, t, c, k, lam):
-    x = np.arange(0, intervalo+h, h)
-    y = vfun(x)
-    plt.plot(x, y, 'r')
-    
-    paso = 0
-    aproximada, v = rungeKuttaO2ConExtras(intervalo, h, extras)
-    u = np.copy(aproximada)
+def imprimirAmortiguado(t,aproximada,k,h):
     plt.plot(t, aproximada)
     plt.xlabel('t')
     plt.ylabel('y')
     plt.title('y(t) RK2 k = ' + str(k))
     name = 'RK2Amortiguado' + str(h) + '.png'
-    #plt.savefig(name)
-    #plt.show()
+    plt.savefig(name)
+    plt.show()
+    return
+
+def imprimirCompresion(t,aproximada,h):
+    plt.plot(t, aproximada)
+    plt.xlabel('t')
+    plt.ylabel('compresion')
+    plt.title('compresion(t) del amortiguador ')
+    name = 'Compresion' + str(h) + '.png'
+    plt.savefig(name)
+    plt.show()
+    return
+
+def iterarCompresion(intervalo,h,aproximada,k,lam,c):
+    paso = 0
     minimo = 0
     for j in range(int((intervalo/h) + 1)):
         aproximada[j] = (aproximada[j] - float(c(paso)))
@@ -111,11 +118,13 @@ def imprimirRungeKutta2Extras(vfun, intervalo, h, extras, t, c, k, lam):
             minimo = aproximada[j]
         paso += h
     print('maxima compresion k = ' + str(k) + ' lambda = ' + str(lam) + '  :  ' + str(minimo))
-    plt.plot(t, aproximada)
-    plt.xlabel('t')
-    plt.ylabel('compresion')
-    plt.title('compresion(t) del amortiguador ')
-    name = 'Compresion' + str(h) + '.png'
-    #plt.savefig(name)
-    #plt.show()
+def imprimirRungeKutta2Extras(vfun, intervalo, h, extras, t, c, k, lam):
+    x = np.arange(0, intervalo+h, h)
+    y = vfun(x)
+    plt.plot(x, y, 'r')
+    aproximada, v = rungeKuttaO2ConExtras(intervalo, h, extras)
+    u = np.copy(aproximada)
+    imprimirAmortiguado(t,aproximada,k,h)
+    iterarCompresion(intervalo,h,aproximada,k,lam,c)
+    imprimirCompresion(t,aproximada,h)
     return u, v
